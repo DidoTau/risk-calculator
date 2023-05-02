@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==3.2"
+psycopg2 = "<3.0,>=2.7"
+djangorestframework = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[packages.DSGD]
+git = "https://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@github.com/Sergio-P/DSGD.git"
