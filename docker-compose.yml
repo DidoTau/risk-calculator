@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+  db:
+    image: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: risk_calculator_user
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: risk_calculator_db
+
+    ports:
+      - "5432:5432"
+    networks:
+      - risk_calculator_network
   backend:
     build:
       context: .
@@ -10,10 +23,21 @@ services:
       - "8000:8000"
     volumes:
       - .:/backend
-
+      - ./db.sqlite3:/backend/db.sqlite3
+    environment:
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+    depends_on:
+      - db
+    networks:
+      - risk_calculator_network
   frontend:
     build:
       context: .
       dockerfile: Dockerfile_vue
+    container_name: frontend
     ports:
       - "8080:8080"
+    networks:
+      - risk_calculator_network
+networks:
+  risk_calculator_network:

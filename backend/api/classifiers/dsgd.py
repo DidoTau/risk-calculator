@@ -44,13 +44,14 @@ class DSGDClassifier:
 
     def postprocessing(self, prediction):
         prediction_prob = prediction[0]
+        print(prediction_prob)
         label = "pCR" if prediction_prob >= 0.5 else "NO pCR"
         return {"label": label, "prob": prediction_prob}
 
     def predict(self, data):
         
         index_fx = lambda col: list(data.columns).index(col)
-        return self.model.predict(data)
+        return self.model.predict_proba(data)[:,1]
 
     def make_prediction(self, data):
         preprocess_data = self.preprocessing(data)

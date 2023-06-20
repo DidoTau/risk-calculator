@@ -14,3 +14,5 @@ class ClassifierRegistry:
             name=algorithm_name, description=algorithm_description, endpoint=endpoint_object)
 
         self.classifiers[created_algorithm.id] = algorithm_object
+
+

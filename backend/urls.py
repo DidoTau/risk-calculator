@@ -14,8 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import SimpleRouter
+from backend.api.views import ClassifierAlgorithmViewSet, EndpointViewSet, RequestViewSet
+from backend.api.views import PredictionView
 
+router = SimpleRouter()
+router.register(r'classifier', ClassifierAlgorithmViewSet)
+router.register(r'endpoints', EndpointViewSet)
+router.register(r'requests', RequestViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
+    path('api/<str:endpoint_name>/predict/', PredictionView.as_view(), name='predict')
 ]

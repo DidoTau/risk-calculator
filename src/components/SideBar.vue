@@ -4,15 +4,20 @@
       <h3>Efectividad de tratamiento neoadyuvante</h3>
     </div>
     <div>
-      <p>Trastuzumab : {{ tSchemePercentage }}</p>
+      <p>Trastuzumab:</p>
+      <p>{{ tSchemePercentage }} %</p>
+      <p>{{ tSchemeLabel }}</p>
     </div>
 
     <div>
-      <p>Trastuzumab y Pertuzumab :{{ tpSchemePercentage }}</p>
+      <p>Trastuzumab y Pertuzumab:</p>
+      <p>{{ tpSchemePercentage }} %</p>
+      <p>{{ tpSchemeLabel }}</p>
     </div>
   </div>
 </template>
 <script>
+import apiService from "@/services/apiService";
 export default {
   // define the name of the component
   name: "SideBar",
@@ -20,18 +25,37 @@ export default {
   data() {
     return {
       results: {},
+      requests: [],
     };
   },
-
+  mounted() {
+    apiService.getRequests().then((data) => {
+      this.requests = data;
+    });
+  },
   computed: {
     isResultsEmpty() {
-      return Object.keys(this.results).length === 0;
+      return Object.keys(this.$store.state.results).length === 0;
     },
     tSchemePercentage() {
-      return !this.isResultsEmpty ? this.results["t_scheme"].percent : "";
+      return !this.isResultsEmpty
+        ? Math.round(this.$store.state.results["t_scheme"].prob * 100)
+        : "";
+    },
+    tSchemeLabel() {
+      return !this.isResultsEmpty
+        ? this.$store.state.results["t_scheme"].label
+        : "";
     },
     tpSchemePercentage() {
-      return !this.isResultsEmpty ? this.results["tp_scheme"].percent : "";
+      return !this.isResultsEmpty
+        ? Math.round(this.$store.state.results["tp_scheme"].prob * 100)
+        : "";
+    },
+    tpSchemeLabel() {
+      return !this.isResultsEmpty
+        ? this.$store.state.results["tp_scheme"].label
+        : "";
     },
   },
 };

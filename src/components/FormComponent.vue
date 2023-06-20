@@ -4,7 +4,7 @@
   >
     <!-- crear formulario con los campos: nombre completo, rut, edad, etapa cancer, grado, receptor de estrogeno, receptor de progesterona, indice ki67, cN, cT -->
 
-    <form action="">
+    <form @submit.prevent="sendForm">
       <div class="row">
         <div class="col m-2">
           <div class="form-group">
@@ -45,6 +45,22 @@
             />
           </div>
         </div>
+
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="bmi">IMC</label>
+            <input
+              type="number"
+              v-model="form.bmi"
+              name="bmi"
+              id="bmi"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="cancer_stage">Etapa del cancer</label>
@@ -54,10 +70,23 @@
               id="cancer_stage"
               class="form-control"
             >
-              <option value="1">Etapa 1</option>
-              <option value="2">Etapa 2</option>
-              <option value="3">Etapa 3</option>
-              <option value="4">Etapa 4</option>
+              <option value="I">Etapa 1</option>
+              <option value="II">Etapa 2</option>
+              <option value="III">Etapa 3</option>
+            </select>
+          </div>
+        </div>
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="molecular_profile"> Perfil Molecular </label>
+            <select
+              v-model="form.molecular_profile"
+              name="molecular_profile"
+              id="molecular_profile"
+              class="form-control"
+            >
+              <option value="Luminal_Her2">Luminal</option>
+              <option value="Her2_Puro">Puro</option>
             </select>
           </div>
         </div>
@@ -66,16 +95,16 @@
       <div class="row">
         <div class="col m-2">
           <div class="form-group">
-            <label for="grade">Grado</label>
+            <label for="status_menop">Estado menopausia</label>
             <select
-              v-model="form.grade"
-              name="grade"
-              id="grade"
+              v-model="form.status_menopause"
+              name="status_menop"
+              id="status_menop"
               class="form-control"
             >
-              <option value="1">Grado 1</option>
-              <option value="2">Grado 2</option>
-              <option value="3">Grado 3</option>
+              <option value="PREMENOPAUSICA">PRE MENOPAUSICA</option>
+              <option value="MENOPAUSICA">MENOPAUSICA</option>
+              <option value="POSTMENOPAUSICA">OST MENOPAUSICA</option>
             </select>
           </div>
         </div>
@@ -88,8 +117,8 @@
               id="estrogen_receptor"
               class="form-control"
             >
-              <option value="1">Positivo</option>
-              <option value="2">Negativo</option>
+              <option :value="100">Positivo</option>
+              <option :value="0">Negativo</option>
             </select>
           </div>
         </div>
@@ -105,8 +134,8 @@
               id="progesterone_receptor"
               class="form-control"
             >
-              <option value="1">Positivo</option>
-              <option value="2">Negativo</option>
+              <option :value="100">Positivo</option>
+              <option :value="0">Negativo</option>
             </select>
           </div>
         </div>
@@ -119,8 +148,8 @@
               id="ki67_index"
               class="form-control"
             >
-              <option value="1">Positivo</option>
-              <option value="2">Negativo</option>
+              <option :value="100">Positivo</option>
+              <option :value="0">Negativo</option>
             </select>
           </div>
         </div>
@@ -131,10 +160,10 @@
           <div class="form-group">
             <label for="cN">cN</label>
             <select v-model="form.cn" name="cN" id="cN" class="form-control">
-              <option value="1">0</option>
-              <option value="2">1</option>
-              <option value="1">2</option>
-              <option value="2">3</option>
+              <option value="cN0">0</option>
+              <option value="cN1">1</option>
+              <option value="cN2">2</option>
+              <option value="cN3">3</option>
             </select>
           </div>
         </div>
@@ -142,18 +171,50 @@
           <div class="form-group">
             <label for="cT">cT</label>
             <select v-model="form.ct" name="cT" id="cT" class="form-control">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="1">3</option>
-              <option value="2">4</option>
+              <option value="cT1">1</option>
+              <option value="cT2">2</option>
+              <option value="cT3">3</option>
+              <option value="cT4">4</option>
             </select>
           </div>
         </div>
+      </div>
+
+      <div class="row">
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="copies">N° de copias</label>
+            <input
+              type="number"
+              v-model="form.copies"
+              name="copies"
+              id="copies"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="relation_cen">Relacion cen </label>
+            <input
+              type="number"
+              v-model="form.relation_cen"
+              name="relation_cen"
+              id="relation_cen"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center my-3">
+        <button type="submit">Enviar</button>
       </div>
     </form>
   </div>
 </template>
 <script>
+import apiService from "@/services/apiService";
 export default {
   name: "FormComponent",
 
@@ -163,15 +224,58 @@ export default {
         name: "",
         rut: "",
         age: "",
+        bmi: "",
         stage: "",
-        grade: "",
+        molecular_profile: "",
+        status_menopause: "",
         estrogen: "",
         progesterone: "",
         ki67: "",
         cn: "",
         ct: "",
+        copies: "",
+        relation_cen: "",
       },
     };
+  },
+  methods: {
+    sendForm() {
+      let input = {
+        rut: this.form.rut,
+        nombre: this.form.name,
+        edad: this.form.age,
+        imc: this.form.bmi,
+        ct: this.form.ct,
+        cn: this.form.cn,
+        ki67: this.form.ki67,
+        "n°_de_copias": this.form.copies,
+        relacion_her_2_cen: this.form.relation_cen,
+        re: this.form.estrogen,
+        rp: this.form.progesterone,
+        status_menop_al_dg: this.form.status_menopause,
+        tipo_histologico: "CDI",
+        perfil_molecular: this.form.molecular_profile,
+        etapa: this.form.stage,
+        axila_en_eco: 0,
+      };
+      input.esquema = 0;
+      apiService.submitForm(input).then((response) => {
+        let payload = {
+          key: "t_scheme",
+          value: response,
+        };
+        this.$store.dispatch("setResults", payload);
+        console.log(response);
+      });
+      input.esquema = 1;
+      apiService.submitForm(input).then((response) => {
+        let payload = {
+          key: "tp_scheme",
+          value: response,
+        };
+        this.$store.dispatch("setResults", payload);
+      });
+    },
   },
 };
 </script>

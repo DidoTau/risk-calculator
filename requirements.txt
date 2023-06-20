@@ -2,7 +2,7 @@ Django>=3.0,<4.0
 psycopg2>=2.7,<3.0
 
 djangorestframework==3.14
-
+django-cors-headers==3.14.0
 pandas 
 
 git+https://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@github.com/Sergio-P/DSGD.git

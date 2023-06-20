@@ -1,7 +1,26 @@
 from django.db import models
 
+from .. import utils
 
-class EndPoint(models.Model):
+class BaseModel(models.Model):
+    
+    id = models.CharField(
+        _('ID'),
+        db_index=True,
+        primary_key=True,
+        max_length=8,
+        unique=True,
+        default=utils.get_new_id,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+ 
+    class Meta:
+        abstract = True
+    
+    
+    
+class EndPoint(BaseModel):
     '''
     This model represents a registered endpoint associated with a registered classifier algorithm.
 
@@ -17,7 +36,7 @@ class EndPoint(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class ClassifierAlgorithm(models.Model):
+class ClassifierAlgorithm(BaseModel):
     '''
     This model represents a registered classifier algorithm.
 
@@ -43,7 +62,7 @@ class ClassifierAlgorithm(models.Model):
         db_table = 'classifier_algorithm'
 
 
-class Request(models.Model):
+class Request(BaseModel):
     '''
     This model represents a request to an endpoint.
 
@@ -60,7 +79,8 @@ class Request(models.Model):
         return self.endpoint.name
 
     created_at = models.DateTimeField(auto_now_add=True)
-    patient_id = models.CharField(max_length=255)
+    patient_id = models.CharField(max_length=255),
+    patiend_name = models.CharField(max_length=255),
     input_data = models.CharField(max_length=10000)
     response_data = models.CharField(max_length=10000)
     feedback_response = models.CharField(
