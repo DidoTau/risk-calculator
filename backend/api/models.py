@@ -5,7 +5,7 @@ from .. import utils
 class BaseModel(models.Model):
     
     id = models.CharField(
-        _('ID'),
+        ('ID'),
         db_index=True,
         primary_key=True,
         max_length=8,
@@ -26,14 +26,14 @@ class EndPoint(BaseModel):
 
     Atributes:
         name (str): The name of the endpoint.
-        created_at (datetime): The date and time of the creation of the endpoint.
+        
     '''
 
     def __str__(self):
         return self.name
 
     name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+    
 
 
 class ClassifierAlgorithm(BaseModel):
@@ -49,7 +49,7 @@ class ClassifierAlgorithm(BaseModel):
 
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
+    
     endpoint = models.ForeignKey(EndPoint,
                                  related_name='classifier_algorithms',
                                  on_delete=models.CASCADE,
@@ -67,7 +67,7 @@ class Request(BaseModel):
     This model represents a request to an endpoint.
 
     Atributes:
-        created_at (datetime): The date and time of the creation of the request.
+        
         patient_id (str): The rut or id of the patient that made the request.
         input_data (str): The input data of the request as JSON.
         response_data (str): The response data of the request as JSON.
@@ -78,7 +78,7 @@ class Request(BaseModel):
     def __str__(self):
         return self.endpoint.name
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    
     patient_id = models.CharField(max_length=255),
     patiend_name = models.CharField(max_length=255),
     input_data = models.CharField(max_length=10000)

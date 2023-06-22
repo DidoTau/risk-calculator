@@ -28,6 +28,7 @@ class DSGDClassifier:
         self.model.model.load_rules_bin(self.rules_bin)
 
     def preprocessing(self, data):
+
         input_data = pd.DataFrame([data])
         input_data['rp'] = input_data.apply(
             lambda x: 1 if x['rp'] >= 20 else 0, axis=1)
@@ -44,7 +45,7 @@ class DSGDClassifier:
 
     def postprocessing(self, prediction):
         prediction_prob = prediction[0]
-        print(prediction_prob)
+        
         label = "pCR" if prediction_prob >= 0.5 else "NO pCR"
         return {"label": label, "prob": prediction_prob}
 

@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <a href="" class="h-100">
+    <a href="" class="mb-2">
       <img src="../assets/logo_falp.svg" alt="Logo falp" class="logo-class" />
     </a>
   </div>
@@ -15,7 +15,7 @@ export default {};
 }
 .navbar {
   width: 100%;
-  height: 10vh;
+  height: 12vh;
   background-color: #fff;
   border-bottom: 1px solid #ebebeb;
   display: flex;

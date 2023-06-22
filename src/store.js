@@ -3,18 +3,22 @@ import Vuex from "vuex";
 const store = new Vuex.Store({
   state: {
     results: { t_scheme: [], tp_scheme: [] },
+    last_requests: [],
   },
   mutations: {
     setResults(state, payload) {
-      console.log(payload);
-      state.results[payload.key] = payload.value;
-      console.log(state.results);
+      state.results = payload;
+    },
+    setRequests(state, payload) {
+      state.last_requests = payload;
     },
   },
   actions: {
     setResults({ commit }, payload) {
-      console.log(payload);
       commit("setResults", payload);
+    },
+    setRequests({ commit }, payload) {
+      commit("setRequests", payload);
     },
   },
 });

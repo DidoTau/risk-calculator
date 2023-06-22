@@ -1,0 +1,116 @@
+{
+  "IMC": {
+    "Términos": ["IMC"]
+  },
+  "Etapa cáncer": {
+    "Términos": ["etapa"]
+  },
+  "Subtipo Molecular": {
+    "Términos": [
+      "triple negativo",
+      "luminal her 2",
+      "luminal b",
+      "luminal a",
+      "her 2 puro"
+    ]
+  },
+  "Diagnostico": {
+    "Términos": ["Diagnostico"]
+  },
+  "Receptor de Estrógeno": {
+    "Términos": [
+      "RH",
+      "Receptores nucleares de estrógeno",
+      "Receptores hormonales",
+      "receptores estrogenos",
+      "Receptores de Estrógenos",
+      "receptores de estrogeno",
+      "Receptor Estrógeno",
+      "Receptor de Estrógenos",
+      "Receptor de Estrógeno",
+      "receptor de estrógeno",
+      "RE.",
+      "RE%",
+      "RE",
+      "R estrógeno",
+      "-RECEPTOR DE ESTROGENOS",
+      "-RECEPTOR DE ESTROGENO"
+    ]
+  },
+  "Receptor de Progesterona": {
+    "Términos": [
+      "RP",
+      "RH",
+      "Receptores nucleares de progesterona",
+      "Receptores hormonales",
+      "Receptor Progesterona",
+      "receptor de progesterona",
+      "R progesterona",
+      "progesterona",
+      "Prog"
+    ]
+  },
+  "Ki67": {
+    "Términos": ["Ki67", "KI-67", "Ki 67", "Ki"]
+  },
+  "TNM": {
+    "Términos": ["TNM*"]
+  },
+
+  "Histología": {
+    "Términos": [
+      "tubular",
+      "papilar intraquistico",
+      "mucinoso",
+      "lubulillar",
+      "lobulillar",
+      "ILC",
+      "ductal",
+      "DCIS",
+      "CPI",
+      "CMI",
+      "CLIS",
+      "CLI",
+      "CIS",
+      "CIL",
+      "CDIS",
+      "CDI",
+      "carcinoma mucoso",
+      "carcinoma microvascular",
+      "carcinoma micropapilar",
+      "carcinoma coloide"
+    ]
+  },
+  "EXAMEN FISICO AXILAR": {
+    "Términos": ["cN2", "CN1", "cN0", "axila"]
+  },
+  "ALK": {
+    "Términos": ["ALK", "RESULTADO DE FISH PARA ALK"]
+  },
+  "FISH": {
+    "Términos": [
+      "hibridacion in situ",
+      "HFIS",
+      "FISH c-MYC",
+      "FISH BCL2",
+      "FISH"
+    ]
+  },
+  "HER2": {
+    "Términos": [
+      "HercepTest",
+      "Hercep Test",
+      "HER2",
+      "HER 2",
+      "HER",
+      "HECEPTEST",
+      "ErbB2"
+    ]
+  },
+  "herceptest": {
+    "Términos": ["testpositivo"]
+  },
+  "adenopatias axilares sospechosa ecografia": {
+    "Términos": ["linfonodo", "ganglio", "adenopatias", "adenopatia"]
+  }
+}

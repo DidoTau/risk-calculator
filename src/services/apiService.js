@@ -19,7 +19,7 @@ const api = axios.create({
 
 export default {
   getRequests() {
-    return api.get("requests/").then((response) => response.data);
+    return api.get("requests/last-requests/").then((response) => response.data);
   },
   submitForm(data) {
     return api

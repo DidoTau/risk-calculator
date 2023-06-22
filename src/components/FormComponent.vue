@@ -2,8 +2,6 @@
   <div
     class="form-component w-75 d-flex justify-content-center align-items-stretch pt-3"
   >
-    <!-- crear formulario con los campos: nombre completo, rut, edad, etapa cancer, grado, receptor de estrogeno, receptor de progesterona, indice ki67, cN, cT -->
-
     <form @submit.prevent="sendForm">
       <div class="row">
         <div class="col m-2">
@@ -23,29 +21,44 @@
             <label for="rut">Rut</label>
             <input
               type="text"
-              v-model="form.rut"
+              v-model="v$.form.rut.$model"
               name="rut"
               id="rut"
               class="form-control"
+              @change="validateRut(form.rut)"
             />
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.rut.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- agrupar las próximas dos form-group en una row -->
-      <div class="row">
+
         <div class="col m-2">
           <div class="form-group">
             <label for="age">Edad</label>
             <input
               type="number"
-              v-model="form.age"
+              v-model="v$.form.age.$model"
               name="age"
               id="age"
               class="form-control"
             />
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.age.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
+      </div>
 
+      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="bmi">IMC</label>
@@ -58,9 +71,6 @@
             />
           </div>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="cancer_stage">Etapa del cancer</label>
@@ -122,9 +132,6 @@
             </select>
           </div>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="progesterone_receptor">Receptor de progesterona</label>
@@ -139,6 +146,9 @@
             </select>
           </div>
         </div>
+      </div>
+
+      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="ki67_index">Ki67</label>
@@ -153,9 +163,6 @@
             </select>
           </div>
         </div>
-      </div>
-
-      <div class="row">
         <div class="col m-2">
           <div class="form-group">
             <label for="cN">cN</label>
@@ -205,21 +212,45 @@
             />
           </div>
         </div>
-      </div>
 
-      <div class="text-center my-3">
-        <button type="submit">Enviar</button>
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="histological_type">Tipo Histológico</label>
+
+            <select
+              v-model="form.histological_type"
+              name="histological_type"
+              id="histological_type"
+              class="form-control"
+            >
+              <option value="CDI">CDI</option>
+              <option value="CLI">CLI</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="text-center py-2">
+        <button
+          class="custom-button"
+          type="submit"
+          :disabled="v$.form.$invalid"
+        >
+          Calcular
+        </button>
       </div>
     </form>
   </div>
 </template>
 <script>
+import useVuelidate from "@vuelidate/core";
+import { required, minLength } from "@vuelidate/validators";
 import apiService from "@/services/apiService";
 export default {
   name: "FormComponent",
 
   data() {
     return {
+      v$: useVuelidate(),
       form: {
         name: "",
         rut: "",
@@ -235,8 +266,14 @@ export default {
         ct: "",
         copies: "",
         relation_cen: "",
+        histological_type: "",
       },
     };
+  },
+  computed: {
+    rutIsValid() {
+      return this.validateRut(this.form.rut);
+    },
   },
   methods: {
     sendForm() {
@@ -253,35 +290,128 @@ export default {
         re: this.form.estrogen,
         rp: this.form.progesterone,
         status_menop_al_dg: this.form.status_menopause,
-        tipo_histologico: "CDI",
+        tipo_histologico: this.form.histological_type,
         perfil_molecular: this.form.molecular_profile,
         etapa: this.form.stage,
         axila_en_eco: 0,
       };
-      input.esquema = 0;
+
       apiService.submitForm(input).then((response) => {
-        let payload = {
-          key: "t_scheme",
-          value: response,
-        };
-        this.$store.dispatch("setResults", payload);
-        console.log(response);
-      });
-      input.esquema = 1;
-      apiService.submitForm(input).then((response) => {
-        let payload = {
-          key: "tp_scheme",
-          value: response,
-        };
-        this.$store.dispatch("setResults", payload);
+        this.$store.dispatch("setResults", response);
       });
     },
+    validateRut(rut) {
+      rut = rut.replace(/[^0-9kK]+/g, "");
+      let body = rut.slice(0, -1);
+      let dv = rut.slice(-1).toUpperCase();
+      if (!rut || rut.length < 7) {
+        return false;
+      }
+      let sum = 0;
+      let multiple = 2;
+      for (let i = 1; i <= body.length; i++) {
+        let index = multiple * body.charAt(body.length - i);
+
+        sum += index;
+        if (multiple < 7) {
+          multiple += 1;
+        } else {
+          multiple = 2;
+        }
+      }
+      let dvExpected = 11 - (sum % 11);
+      dv = dv === "K" ? 10 : dv;
+      dv = dv === 0 ? 11 : dv;
+
+      return dvExpected.toString() === dv.toString();
+    },
+    validateAge(age) {
+      return age > 0 && age < 100;
+    },
+    validateBMI(bmi) {
+      return bmi > 0 && bmi < 100;
+    },
+  },
+  validations() {
+    return {
+      form: {
+        name: {
+          required,
+          minLength: minLength(3),
+        },
+        rut: {
+          required,
+          minLength: minLength(7),
+          rut_validation: {
+            $validator: this.validateRut,
+            $message: "Rut inválido",
+          },
+        },
+        age: {
+          required,
+          age_validation: {
+            $validator: this.validateAge,
+            $message: "Edad inválida",
+          },
+        },
+        bmi: {
+          bmi_validation: {
+            $validator: this.validateBMI,
+            $message: "IMC inválido",
+          },
+        },
+        stage: {
+          required,
+        },
+        molecular_profile: {
+          required,
+        },
+        status_menopause: {
+          required,
+        },
+        estrogen: {
+          required,
+        },
+        progesterone: {
+          required,
+        },
+        ki67: {
+          required,
+        },
+        cn: {
+          required,
+        },
+        ct: {
+          required,
+        },
+        copies: {
+          required,
+        },
+        relation_cen: {
+          required,
+        },
+        histological_type: {
+          required,
+        },
+      },
+    };
   },
 };
 </script>
 <style scoped>
 .form-component {
-  width: 80vw;
-  height: 90vh;
+  width: 70vw;
+  height: 88vh;
+}
+.custom-button {
+  background-color: #004e91;
+  border: 1px solid #004e91;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 </style>

@@ -1,18 +1,46 @@
 <template>
-  <div class="sidebar">
-    <div class="title">
-      <h3>Efectividad de tratamiento neoadyuvante</h3>
-    </div>
-    <div>
-      <p>Trastuzumab:</p>
-      <p>{{ tSchemePercentage }} %</p>
-      <p>{{ tSchemeLabel }}</p>
-    </div>
+  <div class="sidebar pt-2 px-3">
+    <div class="current-prediction">
+      <div class="title">
+        <h3>Efectividad de tratamiento neoadyuvante</h3>
+      </div>
+      <div v-if="tSchemePercentage & tpSchemePercentage" class="mx-auto">
+        <div>
+          <p>Tratamiento con Trastuzumab</p>
+          <p>{{ tSchemePercentage }} %</p>
+          <p>{{ tSchemeLabel }}</p>
+        </div>
 
-    <div>
-      <p>Trastuzumab y Pertuzumab:</p>
-      <p>{{ tpSchemePercentage }} %</p>
-      <p>{{ tpSchemeLabel }}</p>
+        <div>
+          <p>Tratamiento con Trastuzumab y Pertuzumab</p>
+          <p>{{ tpSchemePercentage }} %</p>
+          <p>{{ tpSchemeLabel }}</p>
+        </div>
+      </div>
+      <div v-else class="text-center mx-auto">
+        No has hecho ninguna predicción
+      </div>
+    </div>
+    <div class="last-predictions py-2">
+      <div class="title">
+        <h3>Últimas predicciones</h3>
+      </div>
+      <div class="row">
+        <div class="col text-table text-center">Fecha</div>
+        <div class="col text-table text-center">Nombre</div>
+        <div class="col text-table text-center">T</div>
+        <div class="col text-table text-center">TP</div>
+      </div>
+      <div v-for="request in requests" :key="request.id" class="row">
+        <div class="col text-center">{{ request.date }}</div>
+        <div class="col text-center">{{ request.input_data.nombre }}</div>
+        <div class="col text-center">
+          {{ Math.round(request.response_data.t_scheme.prob * 100) }} %
+        </div>
+        <div class="col text-center">
+          {{ Math.round(request.response_data.tp_scheme.prob * 100) }} %
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -24,14 +52,11 @@ export default {
   // define the data of the component in vue 3
   data() {
     return {
-      results: {},
       requests: [],
     };
   },
   mounted() {
-    apiService.getRequests().then((data) => {
-      this.requests = data;
-    });
+    this.getRequests();
   },
   computed: {
     isResultsEmpty() {
@@ -58,17 +83,46 @@ export default {
         : "";
     },
   },
+  watch: {
+    isResultsEmpty: {
+      handler: function () {
+        this.getRequests();
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    getRequests() {
+      apiService.getRequests().then((data) => {
+        console.log(data);
+        this.requests = data;
+      });
+    },
+  },
 };
 </script>
 <style scoped>
 .sidebar {
-  width: 20vw;
+  width: 30vw;
   position: fixed;
   bottom: 0;
   right: 0;
-  height: 90vh;
+  height: 88vh;
+  border-left: 1px solid #ebebeb;
 }
 .title {
   text-align: center;
+  color: #004e91;
+}
+
+.current-prediction {
+  height: 50%;
+  border-bottom: 1px solid #ebebeb;
+}
+.last-predictions {
+  height: 50%;
+}
+.text-table {
+  color: #004e91;
 }
 </style>

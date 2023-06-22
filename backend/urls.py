@@ -22,7 +22,7 @@ from backend.api.views import PredictionView
 router = SimpleRouter()
 router.register(r'classifier', ClassifierAlgorithmViewSet)
 router.register(r'endpoints', EndpointViewSet)
-router.register(r'requests', RequestViewSet)
+router.register(r'requests', RequestViewSet, basename='requests')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),

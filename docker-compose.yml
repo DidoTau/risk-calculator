@@ -9,34 +9,57 @@ services:
       POSTGRES_USER: risk_calculator_user
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: risk_calculator_db
-
+      TZ: "America/Santiago"
     ports:
       - "5432:5432"
     networks:
       - risk_calculator_network
+
   backend:
     build:
       context: .
-      dockerfile: ./Dockerfile_python
+      dockerfile: ./backend/Dockerfile
+    command: >
+      bash -c "
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000"
     container_name: backend
     ports:
       - "8000:8000"
     volumes:
-      - .:/backend
-      - ./db.sqlite3:/backend/db.sqlite3
+      - ./backend:/backend
+      - ./config/.env:/code/.env
     environment:
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      DB_NAME: risk_calculator_db
+      DB_USER: risk_calculator_user
+      DB_PASSWORD: 1234
+      DB_HOST: db
     depends_on:
       - db
     networks:
       - risk_calculator_network
+    restart: always
+
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile_vue
+      dockerfile: ./src/Dockerfile
     container_name: frontend
     ports:
       - "8080:8080"
+    networks:
+      - risk_calculator_network
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+      - frontend
     networks:
       - risk_calculator_network
 networks:
