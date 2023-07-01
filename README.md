@@ -1,24 +1,33 @@
 # risk-calculator
 
-## Project setup
+## Development setup
+
+## Deployment
+
+If you need to work in the project, add features or edit content, you have to run the services separately.
+
+- POSTGRESQL
+  Depends if you use service
+  ```
+  service postgresql start
+  ```
+  or systemctl
+  ```
+  systemctl start postgresql
+  ```
+  in Ubuntu
+- VueJS fronted
+
+  ```
+  yarn serve
+  ```
+
+Otherwise, you can deploy all the project by running a docker
+
 ```
-npm install
+docker-compose up --build
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### CONSIDERATIONS
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+The charged model must be saved with the same scikit learn version of the repository
