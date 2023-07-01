@@ -8,5 +8,6 @@ nginx
 .env.local
 .env.*.local
 
+__pycache__/
 
 
