@@ -1,5 +1,6 @@
 import pandas as pd
 import pickle as pkl
+import numpy as np
 
 from dsgd.DSClassifierMultiQ import DSClassifierMultiQ
 # create a class to model DSGD algorithm
@@ -19,7 +20,7 @@ class DSGDClassifier:
         self.categorical_columns = [
             'status_menop_al_dg', 'ct', 'cn', 'etapa', 'tipo_histologico', 'perfil_molecular']
         self.non_categorical_columns = ['edad', 'imc', 'axila_en_eco',  're',
-                                        'rp', 'ki67', 'relacion_her_2_cen', 'n°_de_copias', 'esquema']
+                                        'rp', 'ki67', 'relacion_her_2_cen', 'n°_de_copias','esquema']
         self.model = DSClassifierMultiQ(class_num, min_iter, max_iter, min_dloss,
                                         debug_mode, num_workers, lossfn, optim, precompute_rules, lr)
         self.rules_bin = "backend/api/classifiers/models/fold_dsgd_2_model.dsb"
@@ -30,12 +31,22 @@ class DSGDClassifier:
     def preprocessing(self, data):
 
         input_data = pd.DataFrame([data])
+     
+        # explorar las variables no categoricas, si son '', entonces es np.nan
+        for col in self.non_categorical_columns:
+            input_data[col] = input_data[col].apply(
+                lambda x: np.nan if x == '' else x)
+        # si input_data['rp'] >= 20 y es distinto de np.nan, entonces rp = 1, si input_data['rp'] < 20 y es distinto de np.nan, entonces rp = 0 y si es np.nan, entonces rp = np.nan
+            
+            
         input_data['rp'] = input_data.apply(
-            lambda x: 1 if x['rp'] >= 20 else 0, axis=1)
+            lambda x: 1 if x['rp'] and x['rp'] >= 20 else (0 if x['rp'] < 20 and not np.isnan(x['rp']) else np.nan), axis=1)
+    
         input_data['re'] = input_data.apply(
-            lambda x: 1 if x['re'] >= 20 else 0, axis=1)
+                lambda x: 1 if x['re'] and x['re'] >= 20 else (0 if x['re'] < 20 and not np.isnan(x['re']) else np.nan), axis=1)
+
         input_data['ki67'] = input_data.apply(
-            lambda x: 1 if x['ki67'] >= 20 else 0, axis=1)
+                lambda x: 1 if x['ki67'] and x['ki67'] >= 20 else (0 if x['ki67'] < 20 and not np.isnan(x['ki67']) else np.nan), axis=1)
         codified_data = self.encoder.transform(
             input_data[self.categorical_columns])
 
@@ -52,6 +63,7 @@ class DSGDClassifier:
     def predict(self, data):
         
         index_fx = lambda col: list(data.columns).index(col)
+
         return self.model.predict_proba(data)[:,1]
 
     def make_prediction(self, data):

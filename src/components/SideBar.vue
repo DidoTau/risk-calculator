@@ -1,21 +1,25 @@
 <template>
   <div class="sidebar pt-2 px-3">
     <div class="current-prediction">
-      <div class="title">
+      <div class="title mb-4">
         <h3>Efectividad de tratamiento neoadyuvante</h3>
       </div>
-      <div v-if="tSchemePercentage & tpSchemePercentage" class="mx-auto">
-        <div>
-          <p>Tratamiento con Trastuzumab</p>
-          <p>{{ tSchemePercentage }} %</p>
-          <p>{{ tSchemeLabel }}</p>
-        </div>
-
-        <div>
-          <p>Tratamiento con Trastuzumab y Pertuzumab</p>
-          <p>{{ tpSchemePercentage }} %</p>
-          <p>{{ tpSchemeLabel }}</p>
-        </div>
+      <div v-if="tSchemePercentage && tpSchemePercentage" class="mx-auto">
+        <h5 class="text-center">
+          <strong> {{ name }}, {{ age }} años</strong>
+        </h5>
+        <ul>
+          <li class="my-2">
+            <strong>{{ tSchemePercentage }}% ({{ tSchemeLabel }})</strong> con
+            esquema
+            <strong>Trastuzumab</strong>
+          </li>
+          <li>
+            <strong>{{ tpSchemePercentage }}% ({{ tpSchemeLabel }})</strong> con
+            esquema
+            <strong>Trastuzumab y Pertuzumab</strong>
+          </li>
+        </ul>
       </div>
       <div v-else class="text-center mx-auto">
         No has hecho ninguna predicción
@@ -81,6 +85,14 @@ export default {
       return !this.isResultsEmpty
         ? this.$store.state.results["tp_scheme"].label
         : "";
+    },
+    name() {
+      return !this.isResultsEmpty
+        ? this.$store.state.results["name"].replace(/\s/g, "")
+        : "";
+    },
+    age() {
+      return !this.isResultsEmpty ? this.$store.state.results["age"] : "";
     },
   },
   watch: {

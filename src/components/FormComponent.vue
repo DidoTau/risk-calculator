@@ -1,9 +1,77 @@
 <template>
+  <results-patient-modal
+    :visible="openModal"
+    @close-modal="openModal = false"
+  />
+  <div
+    class="offcanvas offcanvas-start w-25 sidebar"
+    tabinex="-1"
+    id="offcanvas"
+    data-bs-keyboard="false"
+    data-bs-backdrop="false"
+  >
+    <div class="offcanvas-header">
+      <h4
+        class="offcanvas-title d-none d-sm-block title"
+        id="offcanvas"
+        @click="toggleSideBar()"
+      >
+        Datos Paciente
+      </h4>
+      <button
+        type="button"
+        class="btn-close text-reset"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+      <div class="offcanvas-body px-0"></div>
+    </div>
+    <div class="px-2">
+      Algunos datos pudieron ser extraídos desde la base de datos:
+      <ul>
+        <li v-for="(field, fieldidx) in falpdata" :key="fieldidx">
+          {{ field.field }} : {{ field.value }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <button
+    class="btn float-start"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvas"
+  >
+    <i
+      class="bi bi-arrow-right-square-fill fs-3"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvas"
+    ></i>
+  </button>
   <div
     class="form-component w-75 d-flex justify-content-center align-items-stretch pt-3"
   >
     <form @submit.prevent="sendForm">
       <div class="row">
+        <div class="col m-2">
+          <div class="form-group">
+            <label for="rut">Rut*</label>
+            <input
+              type="text"
+              v-model="v$.form.rut.$model"
+              name="rut"
+              id="rut"
+              class="form-control"
+              @change="getFalpData(form.rut)"
+              @input="v$.form.rut.$touch()"
+            />
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.rut.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
+          </div>
+        </div>
         <div class="col m-2">
           <div class="form-group">
             <label for="name">Nombre completo</label>
@@ -14,22 +82,9 @@
               id="name"
               class="form-control"
             />
-          </div>
-        </div>
-        <div class="col m-2">
-          <div class="form-group">
-            <label for="rut">Rut</label>
-            <input
-              type="text"
-              v-model="v$.form.rut.$model"
-              name="rut"
-              id="rut"
-              class="form-control"
-              @change="validateRut(form.rut)"
-            />
             <div
               class="input-errors"
-              v-for="(error, index) of v$.form.rut.$errors"
+              v-for="(error, index) of v$.form.name.$errors"
               :key="index"
             >
               <div class="error-msg">{{ error.$message }}</div>
@@ -114,7 +169,7 @@
             >
               <option value="PREMENOPAUSICA">PRE MENOPAUSICA</option>
               <option value="MENOPAUSICA">MENOPAUSICA</option>
-              <option value="POSTMENOPAUSICA">OST MENOPAUSICA</option>
+              <option value="POSTMENOPAUSICA">POST MENOPAUSICA</option>
             </select>
           </div>
         </div>
@@ -229,6 +284,23 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col col-3 m-2">
+          <div class="form-group">
+            <label for="axillary_involvement">Axila en eco</label>
+
+            <select
+              v-model="form.axillary_involvement"
+              name="axillary_involvement"
+              id="axillary_involvement"
+              class="form-control"
+            >
+              <option :value="0">No</option>
+              <option :value="1">Si</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="text-center py-2">
         <button
           class="custom-button"
@@ -245,8 +317,15 @@
 import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import apiService from "@/services/apiService";
+import apiFalpService from "@/services/apiFalpService";
+import ResultsPatientModal from "@/modals/ResultsPatientModal.vue";
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle";
+
 export default {
   name: "FormComponent",
+  components: {
+    ResultsPatientModal,
+  },
 
   data() {
     return {
@@ -267,12 +346,23 @@ export default {
         copies: "",
         relation_cen: "",
         histological_type: "",
+        axillary_involvement: "",
       },
+      openModal: false,
+
+      falpdata: [],
     };
   },
   computed: {
     rutIsValid() {
       return this.validateRut(this.form.rut);
+    },
+  },
+  watch: {
+    rutIsValid(newVal) {
+      if (newVal) {
+        this.getFalpData(this.form.rut);
+      }
     },
   },
   methods: {
@@ -293,12 +383,15 @@ export default {
         tipo_histologico: this.form.histological_type,
         perfil_molecular: this.form.molecular_profile,
         etapa: this.form.stage,
-        axila_en_eco: 0,
+        axila_en_eco: this.form.axillary_involvement,
       };
-
+      apiFalpService.getMetadata().then((response) => {
+        console.log(response);
+      });
       apiService.submitForm(input).then((response) => {
         this.$store.dispatch("setResults", response);
       });
+      this.openModal = true;
     },
     validateRut(rut) {
       rut = rut.replace(/[^0-9kK]+/g, "");
@@ -331,13 +424,25 @@ export default {
     validateBMI(bmi) {
       return bmi > 0 && bmi < 100;
     },
+    getFalpData(rut) {
+      apiFalpService.getPatientData(rut).then((response) => {
+        console.log(response);
+        this.falpdata = response;
+        this.toggleSideBar();
+      });
+    },
+    toggleSideBar() {
+      var offcanvas = document.getElementById("offcanvas");
+      var bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
+      bsOffcanvas.toggle();
+    },
   },
   validations() {
     return {
       form: {
         name: {
-          required,
           minLength: minLength(3),
+          $message: "Largo de nombre inválido",
         },
         rut: {
           required,
@@ -360,39 +465,39 @@ export default {
             $message: "IMC inválido",
           },
         },
-        stage: {
-          required,
-        },
-        molecular_profile: {
-          required,
-        },
-        status_menopause: {
-          required,
-        },
-        estrogen: {
-          required,
-        },
-        progesterone: {
-          required,
-        },
-        ki67: {
-          required,
-        },
-        cn: {
-          required,
-        },
-        ct: {
-          required,
-        },
-        copies: {
-          required,
-        },
-        relation_cen: {
-          required,
-        },
-        histological_type: {
-          required,
-        },
+        // stage: {
+        //   required,
+        // },
+        // molecular_profile: {
+        //   required,
+        // },
+        // status_menopause: {
+        //   required,
+        // },
+        // estrogen: {
+        //   required,
+        // },
+        // progesterone: {
+        //   required,
+        // },
+        // ki67: {
+        //   required,
+        // },
+        // cn: {
+        //   required,
+        // },
+        // ct: {
+        //   required,
+        // },
+        // copies: {
+        //   required,
+        // },
+        // relation_cen: {
+        //   required,
+        // },
+        // histological_type: {
+        //   required,
+        // },
       },
     };
   },
@@ -402,6 +507,7 @@ export default {
 .form-component {
   width: 70vw;
   height: 88vh;
+  pointer-events: auto;
 }
 .custom-button {
   background-color: #004e91;
@@ -413,5 +519,13 @@ export default {
   color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+}
+.title {
+  text-align: center;
+  color: #004e91;
+}
+.sidebar {
+  overflow-y: auto !important;
+  position: fixed;
 }
 </style>

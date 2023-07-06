@@ -32,10 +32,11 @@ class RequestViewSet(viewsets.ModelViewSet
 
 class PredictionView(views.APIView):
     def post(self, request, endpoint_name, format=None):
+        data = request.data.copy()
         
         classifier = ClassifierAlgorithm.objects.filter(endpoint__name=endpoint_name)
-        id = request.data.pop('rut', None)
-        name = request.data.pop('name', None)
+        id = data.pop('rut', None)
+        name = data.pop('name', None)
         if len(classifier) == 0:
             return Response(
                 {"status": "Error", "message": "Classifier algorithm is not available at the given endpoint"},
@@ -43,15 +44,15 @@ class PredictionView(views.APIView):
             )
         classifier_object = registry.classifiers[classifier[0].id]
         # adding 2 options, treatment with trastuzumab and treatment with pertuzumab and trastuzumab
-        data_schema_t = request.data.copy()
+        data_schema_t = data.copy()
         data_schema_t.update({"esquema": 0})
-        data_schema_tp = request.data.copy()
+        data_schema_tp = data.copy()
         data_schema_tp.update({"esquema": 1})
-        
+        print(data)
         prediction_scheme_t = classifier_object.make_prediction(data_schema_t)
         prediction_scheme_tp = classifier_object.make_prediction(data_schema_tp)
-        prediction = {"t_scheme":prediction_scheme_t, "tp_scheme":prediction_scheme_tp}
-        request = Request(input_data=json.dumps(request.data), 
+        prediction = {"name":data["nombre"],"age":data["edad"],"t_scheme":prediction_scheme_t, "tp_scheme":prediction_scheme_tp}
+        request = Request(input_data=json.dumps(data), 
                           response_data=prediction, 
                           feedback_response="",
                           endpoint=classifier[0].endpoint,
