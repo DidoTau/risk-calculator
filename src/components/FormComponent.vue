@@ -5,17 +5,12 @@
   />
   <div
     class="offcanvas offcanvas-start w-25 sidebar"
-    tabinex="-1"
     id="offcanvas"
     data-bs-keyboard="false"
     data-bs-backdrop="false"
   >
     <div class="offcanvas-header">
-      <h4
-        class="offcanvas-title d-none d-sm-block title"
-        id="offcanvas"
-        @click="toggleSideBar()"
-      >
+      <h4 class="offcanvas-title d-none d-sm-block title" id="offcanvas">
         Datos Paciente
       </h4>
       <button
@@ -26,32 +21,32 @@
       ></button>
       <div class="offcanvas-body px-0"></div>
     </div>
-    <div class="px-2">
+    <div v-if="falpdata.length" class="px-3">
       Algunos datos pudieron ser extraídos desde la base de datos:
       <ul>
         <li v-for="(field, fieldidx) in falpdata" :key="fieldidx">
           {{ field.field }} : {{ field.value }}
         </li>
       </ul>
+      <div class="text-center py-2">
+        <button @click="fillForm" class="custom-button">Rellenar</button>
+      </div>
+    </div>
+    <div v-else class="px-3">
+      <p>No se pudo traer la información del rut ingresado</p>
     </div>
   </div>
   <button
-    class="btn float-start"
+    class="btn float-start btn-outline-primary btn-sm custom-button-sidebar"
     data-bs-toggle="offcanvas"
     data-bs-target="#offcanvas"
   >
-    <i
-      class="bi bi-arrow-right-square-fill fs-3"
-      data-bs-toggle="offcanvas"
-      data-bs-target="#offcanvas"
-    ></i>
+    Datos
   </button>
-  <div
-    class="form-component w-75 d-flex justify-content-center align-items-stretch pt-3"
-  >
+  <div class="form-component d-flex pt-5">
     <form @submit.prevent="sendForm">
       <div class="row">
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="rut">Rut*</label>
             <input
@@ -72,7 +67,7 @@
             </div>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="name">Nombre completo</label>
             <input
@@ -92,7 +87,7 @@
           </div>
         </div>
 
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="age">Edad</label>
             <input
@@ -111,10 +106,8 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="bmi">IMC</label>
             <input
@@ -126,7 +119,7 @@
             />
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="cancer_stage">Etapa del cancer</label>
             <select
@@ -141,7 +134,7 @@
             </select>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="molecular_profile"> Perfil Molecular </label>
             <select
@@ -155,10 +148,8 @@
             </select>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="status_menop">Estado menopausia</label>
             <select
@@ -173,7 +164,7 @@
             </select>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="estrogen_receptor">Receptor de estrogeno</label>
             <select
@@ -187,7 +178,7 @@
             </select>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="progesterone_receptor">Receptor de progesterona</label>
             <select
@@ -201,10 +192,8 @@
             </select>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="ki67_index">Ki67</label>
             <select
@@ -218,7 +207,7 @@
             </select>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="cN">cN</label>
             <select v-model="form.cn" name="cN" id="cN" class="form-control">
@@ -229,7 +218,7 @@
             </select>
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="cT">cT</label>
             <select v-model="form.ct" name="cT" id="cT" class="form-control">
@@ -240,10 +229,8 @@
             </select>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="copies">N° de copias</label>
             <input
@@ -255,7 +242,7 @@
             />
           </div>
         </div>
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="relation_cen">Relacion cen </label>
             <input
@@ -268,7 +255,7 @@
           </div>
         </div>
 
-        <div class="col m-2">
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="histological_type">Tipo Histológico</label>
 
@@ -283,9 +270,8 @@
             </select>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col col-3 m-2">
+
+        <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
             <label for="axillary_involvement">Axila en eco</label>
 
@@ -367,6 +353,7 @@ export default {
   },
   methods: {
     sendForm() {
+      console.log("queeeeeeeee");
       let input = {
         rut: this.form.rut,
         nombre: this.form.name,
@@ -425,16 +412,47 @@ export default {
       return bmi > 0 && bmi < 100;
     },
     getFalpData(rut) {
-      apiFalpService.getPatientData(rut).then((response) => {
-        console.log(response);
-        this.falpdata = response;
-        this.toggleSideBar();
-      });
+      apiFalpService
+        .getPatientData(rut)
+        .then((response) => {
+          console.log(response);
+          this.falpdata = response;
+          this.toggleSideBar();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.falpdata = [];
+          this.toggleSideBar();
+        });
     },
     toggleSideBar() {
       var offcanvas = document.getElementById("offcanvas");
       var bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
       bsOffcanvas.toggle();
+    },
+
+    fillForm() {
+      this.falpdata.forEach((field) => {
+        switch (field.field) {
+          case "Edad":
+            this.form.age = parseInt(field.value);
+            break;
+          case "Nombre":
+            this.form.name = field.value;
+            break;
+          case "Receptor de estrógeno":
+            this.form.estrogen = field.value === "Positivo" ? 100 : 0;
+            break;
+          case "Receptor de progesterona":
+            this.form.progesterone = field.value === "Positivo" ? 100 : 0;
+            break;
+          case "Ki67":
+            this.form.ki67 = field.value === "Positivo" ? 100 : 0;
+            break;
+        }
+        this.form[field.field] = field.value;
+      });
+      this.toggleSideBar();
     },
   },
   validations() {
@@ -505,8 +523,8 @@ export default {
 </script>
 <style scoped>
 .form-component {
-  width: 70vw;
-  height: 88vh;
+  width: 60vw;
+  height: 100vh;
   pointer-events: auto;
 }
 .custom-button {
@@ -527,5 +545,10 @@ export default {
 .sidebar {
   overflow-y: auto !important;
   position: fixed;
+  background-color: rgba(209, 209, 209, 0.9);
+}
+.custom-button-sidebar {
+  color: #004e91;
+  border-radius: 0;
 }
 </style>

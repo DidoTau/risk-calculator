@@ -48,7 +48,7 @@ class PredictionView(views.APIView):
         data_schema_t.update({"esquema": 0})
         data_schema_tp = data.copy()
         data_schema_tp.update({"esquema": 1})
-        print(data)
+     
         prediction_scheme_t = classifier_object.make_prediction(data_schema_t)
         prediction_scheme_tp = classifier_object.make_prediction(data_schema_tp)
         prediction = {"name":data["nombre"],"age":data["edad"],"t_scheme":prediction_scheme_t, "tp_scheme":prediction_scheme_tp}

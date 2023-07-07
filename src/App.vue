@@ -1,19 +1,19 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
   <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
-  <NavBar />
+  <!-- <NavBar /> -->
   <SideBar />
   <FormComponent />
 </template>
 
 <script>
-import NavBar from "./components/NavBar.vue";
+// import NavBar from "./components/NavBar.vue";
 import SideBar from "./components/SideBar.vue";
 import FormComponent from "./components/FormComponent.vue";
 export default {
   name: "App",
   components: {
-    NavBar,
+    // NavBar,
     SideBar,
     FormComponent,
   },

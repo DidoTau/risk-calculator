@@ -15,21 +15,26 @@
           <h3 class=""><strong>Resultados</strong></h3>
         </div>
         <div class="modal-body">
-          A partir de las características clínicas e histopatológicas
-          entregadas, la paciente {{ name }} tiene:
+          <div v-if="!isResultsEmpty">
+            A partir de las características clínicas e histopatológicas
+            entregadas, la paciente {{ name }} tiene:
 
-          <ul class="mt-2">
-            <li>
-              <strong>{{ tSchemePercentage }}%</strong> de probabilidad de tener
-              respuesta al tratamiento neoadyuvante siendo tratada solo con
-              <strong>Trastuzumab</strong>.
-            </li>
-            <li>
-              <strong>{{ tpSchemePercentage }}%</strong> de probabilidad de
-              tener respuesta al tratamiento neoadyuvante siendo tratada con
-              <strong>Trastuzumab y Pertuzumab</strong>.
-            </li>
-          </ul>
+            <ul class="mt-2">
+              <li>
+                <strong>{{ tSchemePercentage }}%</strong> de probabilidad de
+                tener respuesta al tratamiento neoadyuvante siendo tratada solo
+                con <strong>Trastuzumab</strong>.
+              </li>
+              <li>
+                <strong>{{ tpSchemePercentage }}%</strong> de probabilidad de
+                tener respuesta al tratamiento neoadyuvante siendo tratada con
+                <strong>Trastuzumab y Pertuzumab</strong>.
+              </li>
+            </ul>
+          </div>
+          <div v-else class="text-center">
+            <div class="spinner-border text-info"></div>
+          </div>
         </div>
 
         <div class="modal-footer d-flex justify-content-center">

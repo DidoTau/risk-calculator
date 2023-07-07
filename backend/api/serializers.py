@@ -26,7 +26,7 @@ class RequestSerializer(serializers.ModelSerializer):
         return corrected_date.strftime("%d-%m-%Y")
     
     def get_input_data(self, instance):
-        print(json.loads(instance.input_data))
+        
         return json.loads(instance.input_data)
     
     def get_response_data(self, instance):

@@ -115,11 +115,11 @@ export default {
 </script>
 <style scoped>
 .sidebar {
-  width: 30vw;
+  width: 35vw;
   position: fixed;
   bottom: 0;
   right: 0;
-  height: 88vh;
+  height: 100vh;
   border-left: 1px solid #ebebeb;
 }
 .title {
