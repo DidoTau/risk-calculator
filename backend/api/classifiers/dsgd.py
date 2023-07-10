@@ -23,7 +23,7 @@ class DSGDClassifier:
                                         'rp', 'ki67', 'relacion_her_2_cen', 'n°_de_copias','esquema']
         self.model = DSClassifierMultiQ(class_num, min_iter, max_iter, min_dloss,
                                         debug_mode, num_workers, lossfn, optim, precompute_rules, lr)
-        self.rules_bin = "backend/api/classifiers/models/fold_dsgd_2_model.dsb"
+        self.rules_bin = "backend/api/classifiers/models/final_dsgd_model.dsb"
 
     def load_rules(self):
         self.model.model.load_rules_bin(self.rules_bin)
