@@ -21,9 +21,19 @@ class DSGDClassifier:
             'status_menop_al_dg', 'ct', 'cn', 'etapa', 'tipo_histologico', 'perfil_molecular']
         self.non_categorical_columns = ['edad', 'imc', 'axila_en_eco',  're',
                                         'rp', 'ki67', 'relacion_her_2_cen', 'n°_de_copias','esquema']
+        self.input_order = ['edad', 'status_menop_al_dg_MENOPAUSICA',
+       'status_menop_al_dg_NO SE MENCIONA',
+       'status_menop_al_dg_POSTMENOPAUSICA',
+       'status_menop_al_dg_PREMENOPAUSICA', 'imc', 'ct_cT1', 'ct_cT2',
+       'ct_cT3', 'ct_cT4', 'cn_cN0', 'cn_cN1', 'cn_cN2', 'cn_cN3', 'etapa_I',
+       'etapa_II', 'etapa_III', 'axila_en_eco', 'tipo_histologico_CDI',
+       'tipo_histologico_CI', 'tipo_histologico_CLI',
+       'tipo_histologico_No concluyente', 're', 'rp', 'ki67',
+       'relacion_her_2_cen', 'n°_de_copias', 'perfil_molecular_Her2_Puro', 'esquema']
+        
         self.model = DSClassifierMultiQ(class_num, min_iter, max_iter, min_dloss,
                                         debug_mode, num_workers, lossfn, optim, precompute_rules, lr)
-        self.rules_bin = "backend/api/classifiers/models/final_dsgd_model.dsb"
+        self.rules_bin = "backend/api/classifiers/models/final_dsgd_model_1.dsb"
 
     def load_rules(self):
         self.model.model.load_rules_bin(self.rules_bin)
@@ -62,12 +72,13 @@ class DSGDClassifier:
 
     def predict(self, data):
         
-        index_fx = lambda col: list(data.columns).index(col)
-
+  
         return self.model.predict_proba(data)[:,1]
 
     def make_prediction(self, data):
         preprocess_data = self.preprocessing(data)
   
+        preprocess_data = preprocess_data[self.input_order]
+ 
         prediction = self.predict(preprocess_data.values.tolist())
         return self.postprocessing(prediction)

@@ -18,9 +18,6 @@ const api = axios.create({
 });
 
 export default {
-  getMetadata() {
-    return api.post("metadata/").then((response) => response.data);
-  },
   getPatientData(rut) {
     return new Promise((resolve, reject) => {
       let body = {
@@ -37,6 +34,8 @@ export default {
           { field: "INT_mama_lateralidad" },
           { field: "INFORME_COMITE" },
           { field: "INT_mama_examenFisico" },
+          { field: "INT_prostata_tnmT" },
+          { field: "INT_prostata_tnmN" },
         ],
       };
       api
@@ -44,7 +43,7 @@ export default {
         .then((response) => {
           let clean_fields = [];
           let fields = response.data;
-          console.log(fields);
+
           // delete duplicates and use the most recent register of the field
           const sortedData = fields.sort(
             (a, b) => (b.timestamp || 0) - (a.timestamp || 0)
@@ -125,6 +124,18 @@ export default {
                 clean_fields.push({
                   field: "Laterialidad",
                   value: f.value,
+                });
+                break;
+              case "INT_prostata_tnmN":
+                clean_fields.push({
+                  field: "cN",
+                  value: "c" + f.value,
+                });
+                break;
+              case "INT_prostata_tnmT":
+                clean_fields.push({
+                  field: "cT",
+                  value: "c" + f.value,
                 });
                 break;
             }

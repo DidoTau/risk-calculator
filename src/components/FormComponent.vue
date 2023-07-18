@@ -25,7 +25,18 @@
       Algunos datos pudieron ser extraídos desde la base de datos:
       <ul>
         <li v-for="(field, fieldidx) in falpdata" :key="fieldidx">
-          {{ field.field }} : {{ field.value }}
+          <span v-if="field.value.length > 20">
+            {{ field.field }} :
+            {{
+              field.expanded
+                ? field.value
+                : field.value.substring(0, 20) + "..."
+            }}
+            <a href="#" @click="toggleText(fieldidx)">
+              {{ field.expanded ? "Ver menos" : "Ver más" }}
+            </a>
+          </span>
+          <span v-else>{{ field.field }} : {{ field.value }}</span>
         </li>
       </ul>
       <div class="text-center py-2">
@@ -121,7 +132,7 @@
         </div>
         <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
-            <label for="cancer_stage">Etapa del cancer</label>
+            <label for="cancer_stage">Etapa del cáncer</label>
             <select
               v-model="form.stage"
               name="cancer_stage"
@@ -232,7 +243,7 @@
 
         <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
-            <label for="copies">N° de copias</label>
+            <label for="copies">N° de copias HER2</label>
             <input
               type="number"
               v-model="form.copies"
@@ -244,7 +255,7 @@
         </div>
         <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
-            <label for="relation_cen">Relacion cen </label>
+            <label for="relation_cen">Relación HER2/CEN </label>
             <input
               type="number"
               v-model="form.relation_cen"
@@ -266,6 +277,7 @@
               class="form-control"
             >
               <option value="CDI">CDI</option>
+              <option value="CI">CI</option>
               <option value="CLI">CLI</option>
             </select>
           </div>
@@ -353,7 +365,6 @@ export default {
   },
   methods: {
     sendForm() {
-      console.log("queeeeeeeee");
       let input = {
         rut: this.form.rut,
         nombre: this.form.name,
@@ -372,9 +383,7 @@ export default {
         etapa: this.form.stage,
         axila_en_eco: this.form.axillary_involvement,
       };
-      apiFalpService.getMetadata().then((response) => {
-        console.log(response);
-      });
+
       apiService.submitForm(input).then((response) => {
         this.$store.dispatch("setResults", response);
       });
@@ -415,14 +424,12 @@ export default {
       apiFalpService
         .getPatientData(rut)
         .then((response) => {
-          console.log(response);
           this.falpdata = response;
           this.toggleSideBar();
         })
         .catch((error) => {
           console.log(error);
           this.falpdata = [];
-          this.toggleSideBar();
         });
     },
     toggleSideBar() {
@@ -449,10 +456,22 @@ export default {
           case "Ki67":
             this.form.ki67 = field.value === "Positivo" ? 100 : 0;
             break;
+          case "Tipo histológico":
+            this.form.histological_type = field.value;
+            break;
+          case "cN":
+            this.form.cn = field.value;
+            break;
+          case "cT":
+            this.form.ct = field.value;
+            break;
         }
         this.form[field.field] = field.value;
       });
       this.toggleSideBar();
+    },
+    toggleText(fieldidx) {
+      this.falpdata[fieldidx].expanded = !this.falpdata[fieldidx].expanded;
     },
   },
   validations() {
