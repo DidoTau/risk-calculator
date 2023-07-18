@@ -74,7 +74,7 @@ export default {
 
     name() {
       return !this.isResultsEmpty
-        ? this.$store.state.results["name"]?.replace(/\s/g, "")
+        ? this.$store.state.results["name"].trim()
         : "";
     },
   },
