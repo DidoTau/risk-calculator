@@ -1,0 +1,31 @@
+build:
+  docker:
+    web: ./backend
+    frontend: ./src
+  config:
+    - ./backend:/backend
+    - ./config/.env:/code/.env
+run:
+  web:
+    command:
+      - bash
+      - -c
+      - |
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:$PORT
+  db:
+    command:
+      - -e
+      - |
+        POSTGRES_DB=risk_calculator_db
+        POSTGRES_USER=risk_calculator_user
+        POSTGRES_PASSWORD=1234
+        DB_NAME=risk_calculator_db
+        DB_USER=risk_calculator_user
+        DB_PASSWORD=1234
+        DB_HOST=$DATABASE_URL
+  frontend:
+    command:
+      - npm
+      - start
+    port: 8080
