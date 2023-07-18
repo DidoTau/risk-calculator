@@ -7,3 +7,6 @@ pandas
 django-cors-headers==3.14.0
 git+https://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@github.com/Sergio-P/DSGD.git
 scikit-learn==1.2.2
+
+
+requests==2.26.0
