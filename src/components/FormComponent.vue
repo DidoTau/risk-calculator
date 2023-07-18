@@ -25,12 +25,12 @@
       Algunos datos pudieron ser extraídos desde la base de datos:
       <ul>
         <li v-for="(field, fieldidx) in falpdata" :key="fieldidx">
-          <span v-if="field.value.length > 20">
+          <span v-if="field.value.length > 50">
             {{ field.field }} :
             {{
               field.expanded
                 ? field.value
-                : field.value.substring(0, 20) + "..."
+                : field.value.substring(0, 50) + "..."
             }}
             <a href="#" @click="toggleText(fieldidx)">
               {{ field.expanded ? "Ver menos" : "Ver más" }}
@@ -315,7 +315,7 @@
 import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import apiService from "@/services/apiService";
-import apiFalpService from "@/services/apiFalpService";
+// import apiFalpService from "@/services/apiFalpService";
 import ResultsPatientModal from "@/modals/ResultsPatientModal.vue";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle";
 
@@ -415,13 +415,13 @@ export default {
       return dvExpected.toString() === dv.toString();
     },
     validateAge(age) {
-      return age > 0 && age < 100;
+      return (age > 0 && age < 100) || age === "";
     },
     validateBMI(bmi) {
-      return bmi > 0 && bmi < 100;
+      return (bmi > 0 && bmi < 100) || bmi === "";
     },
     getFalpData(rut) {
-      apiFalpService
+      apiService
         .getPatientData(rut)
         .then((response) => {
           this.falpdata = response;
@@ -490,7 +490,6 @@ export default {
           },
         },
         age: {
-          required,
           age_validation: {
             $validator: this.validateAge,
             $message: "Edad inválida",

@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from backend.api.views import ClassifierAlgorithmViewSet, EndpointViewSet, RequestViewSet
-from backend.api.views import PredictionView
+from backend.api.views import ClassifierAlgorithmViewSet, EndpointViewSet, RequestViewSet, PredictionView, ProxyView
+
 
 router = SimpleRouter()
 router.register(r'classifier', ClassifierAlgorithmViewSet)
@@ -26,5 +26,8 @@ router.register(r'requests', RequestViewSet, basename='requests')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/<str:endpoint_name>/predict/', PredictionView.as_view(), name='predict')
+    path('api/<str:endpoint_name>/predict/', PredictionView.as_view(), name='predict'),
+    # proxy
+    path('api/proxy/', ProxyView.as_view(), name='proxy'),
+    
 ]

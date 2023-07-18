@@ -1,4 +1,5 @@
 import json
+import requests
 
 from rest_framework import viewsets
 from rest_framework import views, status
@@ -7,7 +8,7 @@ from rest_framework.decorators import action
 from backend.api.models import ClassifierAlgorithm, EndPoint, Request
 from backend.api.serializers import ClassifierAlgorithmSerializer, EndpointSerializer, RequestSerializer
 from backend.wsgi import registry
-
+from django.http import JsonResponse
 class ClassifierAlgorithmViewSet(viewsets.ModelViewSet):
     queryset = ClassifierAlgorithm.objects.all()
     serializer_class = ClassifierAlgorithmSerializer
@@ -62,3 +63,19 @@ class PredictionView(views.APIView):
         request.save() 
        
         return Response(prediction, status=status.HTTP_200_OK)
+    
+class ProxyView(views.APIView):
+    def post(self, request):
+        data = request.data.copy()
+        
+        url = data.get('url')
+        method = data.get('method')
+        headers = data.get('headers')
+        data = data.get('data')
+       
+    
+        response = requests.request(method, url, headers=headers, data=json.dumps(data))
+
+     
+        return JsonResponse(response.json(), safe=False)
+
