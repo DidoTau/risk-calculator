@@ -21,3 +21,5 @@ EXPOSE 8080
 
 # Start the application when the container starts
 CMD [ "npm", "run", "serve" ]
+
+

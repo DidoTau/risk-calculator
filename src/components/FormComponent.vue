@@ -285,7 +285,7 @@
 
         <div class="col col-md-4 col-sm-6 p-2">
           <div class="form-group">
-            <label for="axillary_involvement">Axila en eco</label>
+            <label for="axillary_involvement">Axila en ecografía</label>
 
             <select
               v-model="form.axillary_involvement"
